@@ -82,11 +82,13 @@ description: "Exemplo de plugin externo"
 Define a descrição e o arquivo principal do comando específico:
 
 ```yaml
+name: "ASDF"
 description: "Mostra a versão do Susa CLI"
 script: "main.sh"
+sudo: false
+group:
+os: ["linux", "mac"]
 ```
-
-## 🛠️ Gerenciamento do Plugin
 
 ### Remover o Plugin
 
@@ -110,18 +112,14 @@ susa self plugin list
 
 Este plugin serve como base para criar seus próprios plugins. Principais conceitos:
 
-1. **Namespaces**: Organize comandos relacionados sob um namespace comum
+1. **Categorias**: Organize comandos relacionados sob uma categoria comum
 2. **Configuração YAML**: Defina metadados e comportamento dos comandos
 3. **Scripts Bash**: Implemente a lógica dos comandos
 4. **Funções do Susa**: Utilize funções auxiliares como `setup_command_env`, `show_help`, `log_error`
 
 ### Variáveis de Ambiente Disponíveis
 
-Ao executar scripts dentro do Susa CLI, você tem acesso a:
-
-- `$LIGHT_GREEN`, `$NC`: Cores para formatação de output
-- Funções: `show_description`, `show_usage`, `log_error`
-- Outras variáveis e funções documentadas na CLI
+Ao executar scripts dentro do Susa CLI, você tem acesso as bibliotecas listadas [aqui](https://carlosdorneles-mb.github.io/susa/reference/libraries/).
 
 ## 📖 Recursos Adicionais
 
