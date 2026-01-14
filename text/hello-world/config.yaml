@@ -1,9 +1,11 @@
 # Comandos
-# https://carlosdorneles-mb.github.io/susa/guides/adding-commands/
+# https://duducp.github.io/susa/guides/adding-commands/
 
 name: "ASDF"
 description: "Mostra a versão do Susa CLI"
-script: "main.sh"
+entrypoint: "main.sh"
 sudo: false
-group:
+group: "text"  # opcional
 os: ["linux", "mac"]
+envs:
+  ENABLED: true

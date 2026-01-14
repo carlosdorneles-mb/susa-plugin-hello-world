@@ -24,7 +24,7 @@ Este plugin serve como template e exemplo de referência para desenvolvedores qu
 ### Instalação via Git
 
 ```bash
-susa self plugin install https://github.com/carlosdorneles-mb/susa-plugin-hello-world.git
+susa self plugin install https://github.com/duducp/susa-plugin-hello-world.git
 ```
 
 ### Verificar Instalação
@@ -117,13 +117,79 @@ Este plugin serve como base para criar seus próprios plugins. Principais concei
 3. **Scripts Bash**: Implemente a lógica dos comandos
 4. **Funções do Susa**: Utilize funções auxiliares como `setup_command_env`, `show_help`, `log_error`
 
+### Testando o Plugin
+
+Durante o desenvolvimento, você pode testar o plugin localmente sem precisar instalá-lo primeiro. O Susa CLI oferece o comando `self plugin run` que permite executar plugins em **modo de desenvolvimento**.
+
+#### Modo Automático (Recomendado)
+
+Para testes rápidos, use o modo automático que adiciona o plugin temporariamente, executa o comando e faz cleanup automaticamente:
+
+```bash
+# Execute do diretório raiz do plugin
+cd susa-plugin-hello-world
+susa self plugin run susa-plugin-hello-world text hello-world
+
+# Passar argumentos para o comando
+susa self plugin run susa-plugin-hello-world text hello-world -- --help
+```
+
+O plugin é automaticamente:
+
+1. Adicionado ao registry temporariamente
+2. Executado
+3. Removido do registry após execução
+
+#### Modo Manual (Testes Múltiplos)
+
+Para testes mais elaborados onde você precisa executar múltiplos comandos sem reinstalar:
+
+```bash
+# 1. Preparar plugin dev (adicionar ao registry)
+cd susa-plugin-hello-world
+susa self plugin run --prepare susa-plugin-hello-world text hello-world
+
+# 2. Executar comandos normalmente (múltiplas vezes)
+susa text hello-world
+susa text hello-world --help
+
+# 3. Limpar plugin dev (remover do registry)
+susa self plugin run --cleanup susa-plugin-hello-world text hello-world
+```
+
+#### Separador de Argumentos
+
+Use `--` para separar opções do comando `run` de argumentos do plugin:
+
+```bash
+# --help vai para o plugin (não para o comando run)
+susa self plugin run susa-plugin-hello-world text hello-world -- --help
+
+# Múltiplos argumentos após o separador
+susa self plugin run susa-plugin-hello-world text hello-world -- --verbose --dry-run
+```
+
+#### Debug com Verbose
+
+```bash
+# Verbose do run (mostra busca e preparação interna)
+susa self plugin run -v susa-plugin-hello-world text hello-world
+
+# Verbose do plugin (usa separador --)
+susa self plugin run susa-plugin-hello-world text hello-world -- -v
+```
+
+Isso permite testar suas mudanças rapidamente durante o desenvolvimento sem precisar instalar e reinstalar o plugin a cada modificação.
+
+Para maiores informações consulte a documentação do comando [run](https://duducp.github.io/susa/reference/commands/self/plugins/run/) e a documentação de [plugins](https://duducp.github.io/susa/plugins/overview/).
+
 ### Variáveis de Ambiente Disponíveis
 
-Ao executar scripts dentro do Susa CLI, você tem acesso as bibliotecas listadas [aqui](https://carlosdorneles-mb.github.io/susa/reference/libraries/).
+Ao executar scripts dentro do Susa CLI, você tem acesso as bibliotecas listadas [aqui](https://duducp.github.io/susa/reference/libraries/).
 
 ## 📖 Recursos Adicionais
 
-- **Documentação Oficial**: [Visão Geral de Plugins](https://carlosdorneles-mb.github.io/susa/plugins/overview/)
+- **Documentação Oficial**: [Visão Geral de Plugins](https://duducp.github.io/susa/plugins/overview/)
 - **API de Plugins**: Guias detalhados sobre desenvolvimento
 - **Exemplos**: Mais exemplos de plugins na organização
 

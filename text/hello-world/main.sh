@@ -1,7 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-
-setup_command_env
+IFS=$'\n\t'
 
 # Help function
 show_help() {
@@ -28,6 +27,8 @@ show_help() {
 # Hello function
 func_hello_world() {
     log_info "Executando func_hello_world..."
+    log_debug "Variável de ambiente ENABLED carregada: ${ENABLED:-not set}"
+    
     # Adicione a lógica da função aqui
 }
 
