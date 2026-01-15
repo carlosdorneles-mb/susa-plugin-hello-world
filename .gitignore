@@ -85,3 +85,24 @@ GitHub.sublime-settings
 # Notepad++
 *.bak
 *.tmp
+
+# Environment files (.env)
+.env
+.env.local
+.env.*.local
+.env.secrets
+**/.env
+**/.env.local
+**/.env.*.local
+
+# Pre-commit
+.pre-commit-cache/
+
+# Python (for pre-commit)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+ENV/

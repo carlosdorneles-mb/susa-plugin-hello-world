@@ -1,111 +1,151 @@
 # 🚀 Hello World - Susa Plugin
 
-Um plugin de exemplo para o Susa CLI que demonstra a estrutura básica e as melhores práticas para desenvolvimento de plugins externos.
+Plugin de exemplo para o Susa CLI demonstrando como criar seus próprios plugins.
 
 ## 📋 Sobre
 
-Este plugin serve como template e exemplo de referência para desenvolvedores que desejam criar seus próprios plugins para o Susa CLI. Ele implementa um comando simples que exibe "Hello World!" demonstrando:
+Este plugin serve como **template de referência** para criar plugins do Susa CLI.
 
-- Estrutura de diretórios recomendada
-- Configuração de comandos via YAML
-- Implementação de scripts bash
-- Sistema de ajuda integrado
-- Tratamento de argumentos e opções
+**O que este exemplo demonstra:**
 
-## ✨ Funcionalidades
-
-- **Comando Hello World**: Exibe uma mensagem de saudação personalizada
-- **Sistema de Ajuda**: Documentação integrada acessível via `--help`
-- **Tratamento de Erros**: Validação de argumentos e mensagens de erro claras
-- **Integração Completa**: Utiliza as funções e variáveis do ambiente Susa CLI
+- ✅ Estrutura básica de diretórios
+- ✅ Configuração via YAML (`config.yaml`)
+- ✅ Uso de variáveis de ambiente
+- ✅ Suporte a arquivos `.env`
+- ✅ Tratamento de argumentos
+- ✅ Sistema de ajuda integrado
+- ✅ Uso das bibliotecas do Susa (logger, colors, etc.)
 
 ## 🔧 Instalação
 
-### Instalação via Git
-
 ```bash
-susa self plugin install https://github.com/duducp/susa-plugin-hello-world.git
-```
+# Via Git
+susa self plugin add https://github.com/duducp/susa-plugin-hello-world.git
 
-### Verificar Instalação
-
-Após a instalação, verifique se o plugin está disponível:
-
-```bash
-susa text hello-world --help
+# Verificar instalação
+susa self plugin list
 ```
 
 ## 📚 Uso
 
-### Comando Básico
-
 ```bash
-susa text hello-world
+# Comando básico
+susa demo hello
+
+# Com nome personalizado
+susa demo hello --name "João"
+
+# Ver ajuda
+susa demo hello --help
 ```
 
-**Saída:**
-
-```text
-Hello World! This is a sample setup script.
-```
-
-### Exibir Ajuda
-
-```bash
-susa text hello-world --help
-```
-
-## 🗂️ Estrutura do Projeto
+## 🗂️ Estrutura do Plugin
 
 ```text
 susa-plugin-hello-world/
-├── README.md                # Este arquivo
-└── text/                    # Categoria do plugin
-    ├── config.yaml          # Configuração da categoria
-    └── hello-world/         # Comando hello-world
-        ├── config.yaml      # Configuração do comando
-        └── main.sh          # Script principal
+├── README.md              # Documentação
+├── demo/                  # Categoria
+│   ├── config.yaml        # Config da categoria
+│   └── hello/             # Comando
+│       ├── config.yaml    # Config do comando
+│       ├── main.sh        # Script principal
+│       ├── .env           # Variáveis (opcional)
+│       └── .env.example   # Exemplo de .env
 ```
 
-### Arquivos de Configuração
+## 📝 Arquivos de Configuração
 
-#### `text/config.yaml`
-
-Define a descrição da categoria principal do plugin:
+### Categoria: `demo/config.yaml`
 
 ```yaml
-description: "Exemplo de plugin externo"
+name: "Demo"
+description: "Comandos de demonstração do plugin"
 ```
 
-#### `text/hello-world/config.yaml`
-
-Define a descrição e o arquivo principal do comando específico:
+### Comando: `demo/hello/config.yaml`
 
 ```yaml
-name: "ASDF"
-description: "Mostra a versão do Susa CLI"
-script: "main.sh"
+name: "Hello World"
+description: "Exibe uma mensagem de saudação"
+entrypoint: "main.sh"
 sudo: false
-group:
 os: ["linux", "mac"]
+
+# Arquivos .env (opcional)
+env_files:
+  - ".env"
+
+# Variáveis de ambiente
+envs:
+  HELLO_PREFIX: "👋"
+  HELLO_COLOR: "green"
 ```
 
-### Remover o Plugin
+## 🚀 Como Criar Seu Próprio Plugin
+
+### 1. Clone este repositório como base
 
 ```bash
-susa self plugin remove susa-plugin-hello-world
+git clone https://github.com/duducp/susa-plugin-hello-world.git meu-plugin
+cd meu-plugin
 ```
 
-### Atualizar o Plugin
+### 2. Renomeie a estrutura
 
 ```bash
-susa self plugin update susa-plugin-hello-world
+# Renomear categoria de 'demo' para sua categoria
+mv demo/ minha-categoria/
+
+# Renomear comando de 'hello' para seu comando
+mv minha-categoria/hello/ minha-categoria/meu-comando/
 ```
 
-### Listar Plugins Instalados
+### 3. Edite os arquivos
+
+- `README.md` - Documentação do seu plugin
+- `minha-categoria/config.yaml` - Nome e descrição da categoria
+- `minha-categoria/meu-comando/config.yaml` - Configuração do comando
+- `minha-categoria/meu-comando/main.sh` - Lógica do comando
+
+### 4. Teste localmente
 
 ```bash
+# Instalar localmente
+susa self plugin add /caminho/completo/para/meu-plugin
+
+# Testar
+susa minha-categoria meu-comando
+```
+
+### 5. Publique no GitHub
+
+```bash
+git remote set-url origin https://github.com/seu-usuario/meu-plugin.git
+git add .
+git commit -m "Meu plugin customizado"
+git push -u origin main
+```
+
+## 🛠️ Gerenciar Plugin
+
+```bash
+# Listar plugins instalados
 susa self plugin list
+
+# Atualizar plugin
+susa self plugin update susa-plugin-hello-world
+
+# Atualizar sem confirmação (útil para scripts/CI)
+susa self plugin update susa-plugin-hello-world -y
+
+# Atualizar com logs detalhados
+susa self plugin update susa-plugin-hello-world -v
+
+# Remover plugin
+susa self plugin remove susa-plugin-hello-world
+
+# Remover sem confirmação e modo silencioso
+susa self plugin remove susa-plugin-hello-world -y -q
 ```
 
 ## 🎓 Desenvolvimento de Plugins
@@ -119,69 +159,84 @@ Este plugin serve como base para criar seus próprios plugins. Principais concei
 
 ### Testando o Plugin
 
-Durante o desenvolvimento, você pode testar o plugin localmente sem precisar instalá-lo primeiro. O Susa CLI oferece o comando `self plugin run` que permite executar plugins em **modo de desenvolvimento**.
-
-#### Modo Automático (Recomendado)
-
-Para testes rápidos, use o modo automático que adiciona o plugin temporariamente, executa o comando e faz cleanup automaticamente:
+Durante o desenvolvimento, teste o plugin instalando-o localmente:
 
 ```bash
-# Execute do diretório raiz do plugin
+# Instalar plugin em modo desenvolvimento
 cd susa-plugin-hello-world
-susa self plugin run susa-plugin-hello-world text hello-world
+susa self plugin add .
 
-# Passar argumentos para o comando
-susa self plugin run susa-plugin-hello-world text hello-world -- --help
+# Testar comandos
+susa demo hello
+susa demo hello --name "João"
+
+# Fazer alterações no código e testar novamente
+# As mudanças são refletidas imediatamente!
+susa demo hello --name "Maria"
 ```
 
-O plugin é automaticamente:
+Plugins instalados localmente (modo dev) refletem alterações automaticamente - não é necessário reinstalar após cada modificação.
 
-1. Adicionado ao registry temporariamente
-2. Executado
-3. Removido do registry após execução
+Para maiores informações consulte a documentação de [plugins](https://duducp.github.io/susa/plugins/overview/).
 
-#### Modo Manual (Testes Múltiplos)
+## 🔍 Qualidade de Código
 
-Para testes mais elaborados onde você precisa executar múltiplos comandos sem reinstalar:
+Este plugin inclui configurações para manter a qualidade do código Shell.
+
+### Ferramentas Incluídas
+
+- **ShellCheck** - Análise estática de scripts shell
+- **shfmt** - Formatador de código shell
+- **pre-commit** - Hooks automáticos de verificação
+- **yamllint** - Validação de arquivos YAML
+
+### Instalação Rápida
 
 ```bash
-# 1. Preparar plugin dev (adicionar ao registry)
-cd susa-plugin-hello-world
-susa self plugin run --prepare susa-plugin-hello-world text hello-world
-
-# 2. Executar comandos normalmente (múltiplas vezes)
-susa text hello-world
-susa text hello-world --help
-
-# 3. Limpar plugin dev (remover do registry)
-susa self plugin run --cleanup susa-plugin-hello-world text hello-world
+# Instalar dependências
+make install-dev
 ```
 
-#### Separador de Argumentos
-
-Use `--` para separar opções do comando `run` de argumentos do plugin:
+### Comandos de Desenvolvimento
 
 ```bash
-# --help vai para o plugin (não para o comando run)
-susa self plugin run susa-plugin-hello-world text hello-world -- --help
+# Ver todos os comandos disponíveis
+make help
 
-# Múltiplos argumentos após o separador
-susa self plugin run susa-plugin-hello-world text hello-world -- --verbose --dry-run
+# Verificar código (shellcheck)
+make lint
+
+# Formatar código automaticamente
+make format
+
+# Limpar arquivos temporários
+make clean
 ```
 
-#### Debug com Verbose
+### Configuração do Editor
 
-```bash
-# Verbose do run (mostra busca e preparação interna)
-susa self plugin run -v susa-plugin-hello-world text hello-world
+O plugin já vem com configurações prontas para VS Code:
 
-# Verbose do plugin (usa separador --)
-susa self plugin run susa-plugin-hello-world text hello-world -- -v
+1. Abra o projeto no VS Code
+2. Instale as extensões recomendadas (VS Code irá sugerir automaticamente)
+3. As configurações em `.vscode/settings.json` já estão prontas
+
+**Extensões recomendadas:**
+
+- ShellCheck (`timonwong.shellcheck`)
+- Shell Format (`foxundermoon.shell-format`)
+- YAML (`redhat.vscode-yaml`)
+- EditorConfig (`editorconfig.editorconfig`)
+
+### Integração CI/CD
+
+O arquivo `.pre-commit-config.yaml` pode ser usado em pipelines CI:
+
+```yaml
+# GitHub Actions
+- name: Run pre-commit
+  uses: pre-commit/action@v3.0.0
 ```
-
-Isso permite testar suas mudanças rapidamente durante o desenvolvimento sem precisar instalar e reinstalar o plugin a cada modificação.
-
-Para maiores informações consulte a documentação do comando [run](https://duducp.github.io/susa/reference/commands/self/plugins/run/) e a documentação de [plugins](https://duducp.github.io/susa/plugins/overview/).
 
 ### Variáveis de Ambiente Disponíveis
 

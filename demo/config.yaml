@@ -1,0 +1,5 @@
+# Configuração da Categoria
+# Referência: https://duducp.github.io/susa/guides/subcategories/
+
+name: "Demo"
+description: "Comandos de demonstração e exemplos"

@@ -1,0 +1,25 @@
+{
+  "shellcheck.enable": true,
+  "shellcheck.executablePath": "shellcheck",
+  "shellcheck.run": "onType",
+  "shellformat.flag": "-i 4",
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    }
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true
+  },
+  "files.associations": {
+    "*.sh": "shellscript",
+    ".shellcheckrc": "properties",
+    ".yamllint": "yaml"
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "editor.rulers": [80, 120]
+}
