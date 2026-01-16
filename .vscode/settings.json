@@ -16,8 +16,7 @@
   },
   "files.associations": {
     "*.sh": "shellscript",
-    ".shellcheckrc": "properties",
-    ".yamllint": "yaml"
+    ".shellcheckrc": "properties"
   },
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,

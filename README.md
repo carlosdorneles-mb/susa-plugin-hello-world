@@ -9,7 +9,7 @@ Este plugin serve como **template de referência** para criar plugins do Susa CL
 **O que este exemplo demonstra:**
 
 - ✅ Estrutura básica de diretórios
-- ✅ Configuração via YAML (`config.yaml`)
+- ✅ Configuração via JSON (`command.json` e `category.json`)
 - ✅ Uso de variáveis de ambiente
 - ✅ Suporte a arquivos `.env`
 - ✅ Tratamento de argumentos
@@ -44,10 +44,11 @@ susa demo hello --help
 ```text
 susa-plugin-hello-world/
 ├── README.md              # Documentação
+├── plugin.json            # Config do plugin
 ├── demo/                  # Categoria
-│   ├── config.yaml        # Config da categoria
+│   ├── category.json      # Config da categoria
 │   └── hello/             # Comando
-│       ├── config.yaml    # Config do comando
+│       ├── command.json   # Config do comando
 │       ├── main.sh        # Script principal
 │       ├── .env           # Variáveis (opcional)
 │       └── .env.example   # Exemplo de .env
@@ -55,30 +56,30 @@ susa-plugin-hello-world/
 
 ## 📝 Arquivos de Configuração
 
-### Categoria: `demo/config.yaml`
+### Categoria: `demo/category.json`
 
-```yaml
-name: "Demo"
-description: "Comandos de demonstração do plugin"
+```json
+{
+  "name": "Demo",
+  "description": "Comandos de demonstração do plugin"
+}
 ```
 
-### Comando: `demo/hello/config.yaml`
+### Comando: `demo/hello/command.json`
 
-```yaml
-name: "Hello World"
-description: "Exibe uma mensagem de saudação"
-entrypoint: "main.sh"
-sudo: false
-os: ["linux", "mac"]
-
-# Arquivos .env (opcional)
-env_files:
-  - ".env"
-
-# Variáveis de ambiente
-envs:
-  HELLO_PREFIX: "👋"
-  HELLO_COLOR: "green"
+```json
+{
+  "name": "Hello World",
+  "description": "Exibe uma mensagem de saudação",
+  "entrypoint": "main.sh",
+  "sudo": false,
+  "os": ["linux", "mac"],
+  "env_files": [".env"],
+  "envs": {
+    "HELLO_PREFIX": "👋",
+    "HELLO_COLOR": "green"
+  }
+}
 ```
 
 ## 🚀 Como Criar Seu Próprio Plugin
@@ -103,8 +104,8 @@ mv minha-categoria/hello/ minha-categoria/meu-comando/
 ### 3. Edite os arquivos
 
 - `README.md` - Documentação do seu plugin
-- `minha-categoria/config.yaml` - Nome e descrição da categoria
-- `minha-categoria/meu-comando/config.yaml` - Configuração do comando
+- `minha-categoria/category.json` - Nome e descrição da categoria
+- `minha-categoria/meu-comando/command.json` - Configuração do comando
 - `minha-categoria/meu-comando/main.sh` - Lógica do comando
 
 ### 4. Teste localmente
@@ -153,7 +154,7 @@ susa self plugin remove susa-plugin-hello-world -y -q
 Este plugin serve como base para criar seus próprios plugins. Principais conceitos:
 
 1. **Categorias**: Organize comandos relacionados sob uma categoria comum
-2. **Configuração YAML**: Defina metadados e comportamento dos comandos
+2. **Configuração JSON**: Defina metadados e comportamento dos comandos
 3. **Scripts Bash**: Implemente a lógica dos comandos
 4. **Funções do Susa**: Utilize funções auxiliares como `setup_command_env`, `show_help`, `log_error`
 
@@ -188,7 +189,6 @@ Este plugin inclui configurações para manter a qualidade do código Shell.
 - **ShellCheck** - Análise estática de scripts shell
 - **shfmt** - Formatador de código shell
 - **pre-commit** - Hooks automáticos de verificação
-- **yamllint** - Validação de arquivos YAML
 
 ### Instalação Rápida
 
@@ -225,7 +225,6 @@ O plugin já vem com configurações prontas para VS Code:
 
 - ShellCheck (`timonwong.shellcheck`)
 - Shell Format (`foxundermoon.shell-format`)
-- YAML (`redhat.vscode-yaml`)
 - EditorConfig (`editorconfig.editorconfig`)
 
 ### Integração CI/CD

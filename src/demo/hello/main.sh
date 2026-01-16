@@ -29,7 +29,6 @@ show_help() {
     echo "  susa demo hello"
     echo "  susa demo hello --name \"João\""
     echo "  HELLO_COLOR=blue susa demo hello --name \"Maria\""
-    echo ""
 }
 
 # Função principal do comando

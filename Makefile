@@ -67,8 +67,8 @@ install-dev: ## Instala ferramentas de desenvolvimento
 	if [ -n "$$PIP_CMD" ]; then \
 		echo "$(BLUE)  → Instalando ferramentas Python...$(NC)"; \
 		$$PIP_CMD install --user --upgrade pip 2>/dev/null || $$PIP_CMD install --upgrade pip; \
-		$$PIP_CMD install --user pre-commit yamllint 2>/dev/null || $$PIP_CMD install pre-commit yamllint; \
-		echo "$(GREEN)    ✅ pre-commit e yamllint instalados!$(NC)"; \
+		$$PIP_CMD install --user pre-commit 2>/dev/null || $$PIP_CMD install pre-commit; \
+		echo "$(GREEN)    ✅ pre-commit instalado!$(NC)"; \
 	else \
 		echo "$(RED)❌ pip não está disponível. Instale Python/pip primeiro.$(NC)"; \
 		exit 1; \
@@ -84,7 +84,7 @@ install-dev: ## Instala ferramentas de desenvolvimento
 	@echo ""
 	@echo "$(GREEN)✅ Ferramentas de desenvolvimento instaladas com sucesso!$(NC)"
 
-lint: ## Executa ShellCheck, shfmt e yamllint em todos os arquivos
+lint: ## Executa ShellCheck, shfmt em todos os arquivos
 	@if find . -name "*.sh" -not -path "./.git/*" -not -path "./.pre-commit-cache/*" | xargs shellcheck -x; then \
 		echo "$(GREEN)✅ Todos os scripts passaram na verificação do ShellCheck!$(NC)"; \
 	else \
@@ -97,13 +97,6 @@ lint: ## Executa ShellCheck, shfmt e yamllint em todos os arquivos
 	else \
 		echo "$(RED)❌ Alguns scripts falharam na verificação de formatação do shfmt$(NC)"; \
 		echo "$(YELLOW)💡 Execute 'make format' para corrigir$(NC)"; \
-		exit 1; \
-	fi
-
-	@if yamllint .; then \
-		echo "$(GREEN)✅ Todos os arquivos YAML passaram na verificação!$(NC)"; \
-	else \
-		echo "$(RED)❌ Alguns arquivos YAML falharam na verificação$(NC)"; \
 		exit 1; \
 	fi
 

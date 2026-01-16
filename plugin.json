@@ -1,0 +1,6 @@
+{
+  "name": "hello-world-plugin",
+  "version": "0.0.0",
+  "description": "Descrição do que o plugin faz",
+  "directory": "src"
+}

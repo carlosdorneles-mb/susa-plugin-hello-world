@@ -9,10 +9,11 @@ Este documento complementa o README.md com informações técnicas sobre desenvo
 ```text
 meu-plugin/
 ├── README.md
+├── plugin.json
 └── categoria/
-    ├── config.yaml
+    ├── category.json
     └── comando/
-        ├── config.yaml
+        ├── command.json
         └── main.sh
 ```
 
@@ -21,27 +22,30 @@ meu-plugin/
 ```text
 meu-plugin/
 ├── README.md
+├── plugin.json
 ├── LICENSE
 ├── .gitignore
 └── categoria/
-    ├── config.yaml
+    ├── category.json
     ├── comando1/
-    │   ├── config.yaml
+    │   ├── command.json
     │   ├── main.sh
     │   ├── .env.example
     │   └── .gitignore     # Ignorar .env local
     └── comando2/
-        ├── config.yaml
+        ├── command.json
         └── main.sh
 ```
 
 ## 🔧 Configuração Detalhada
 
-### config.yaml da Categoria
+### category.json da Categoria
 
-```yaml
-name: "Nome da Categoria"
-description: "Descrição breve da categoria"
+```json
+{
+  "name": "Nome da Categoria",
+  "description": "Descrição breve da categoria"
+}
 ```
 
 **Campos:**
@@ -49,25 +53,22 @@ description: "Descrição breve da categoria"
 - `name`: Nome exibido no help (opcional)
 - `description`: Descrição da categoria (obrigatório)
 
-### config.yaml do Comando
+### command.json do Comando
 
-```yaml
-name: "Nome do Comando"
-description: "Descrição breve do comando"
-entrypoint: "main.sh"
-sudo: false
-os: ["linux", "mac"]
-
-# Opcional: Arquivos .env
-env_files:
-  - ".env"
-  - ".env.local"
-
-# Opcional: Variáveis de ambiente
-envs:
-  VAR1: "valor1"
-  VAR2: "valor2"
-  VAR_PATH: "$HOME/.config"
+```json
+{
+  "name": "Nome do Comando",
+  "description": "Descrição breve do comando",
+  "entrypoint": "main.sh",
+  "sudo": false,
+  "os": ["linux", "mac"],
+  "env_files": [".env", ".env.local"],
+  "envs": {
+    "VAR1": "valor1",
+    "VAR2": "valor2",
+    "VAR_PATH": "$HOME/.config"
+  }
+}
 ```
 
 **Campos obrigatórios:**
@@ -89,21 +90,23 @@ envs:
 ### Ordem de Precedência
 
 1. **Sistema** - `export VAR=value` ou `VAR=value susa comando`
-2. **Config envs** - `config.yaml → envs:`
+2. **Config envs** - `command.json → envs:`
 3. **Global** - `config/settings.conf`
 4. **Arquivos .env** - Na ordem de `env_files:`
 5. **Padrão no script** - `${VAR:-default}`
 
 ### Exemplo Prático
 
-**config.yaml:**
+**command.json:**
 
-```yaml
-env_files:
-  - ".env"
-envs:
-  API_URL: "https://api.example.com"
-  TIMEOUT: "30"
+```json
+{
+  "env_files": [".env"],
+  "envs": {
+    "API_URL": "https://api.example.com",
+    "TIMEOUT": "30"
+  }
+}
 ```
 
 **.env:**
@@ -447,8 +450,8 @@ susa self lock
 # Testar com debug
 DEBUG=true susa categoria comando
 
-# Verificar se config.yaml está correto
-cat "$HOME/.local/share/susa/plugins/seu-plugin/categoria/comando/config.yaml"
+# Verificar se command.json está correto
+cat "/.local/share/susa/plugins/seu-plugin/categoria/comando/command.json"
 ```
 
 ### Erro ao executar

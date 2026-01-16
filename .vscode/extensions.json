@@ -2,7 +2,6 @@
   "recommendations": [
     "timonwong.shellcheck",
     "foxundermoon.shell-format",
-    "redhat.vscode-yaml",
     "editorconfig.editorconfig",
     "streetsidesoftware.code-spell-checker"
   ]

@@ -7,10 +7,11 @@ Este documento mostra diferentes estruturas de plugins do mais simples ao mais c
 ```text
 meu-plugin/
 ├── README.md
+├── plugin.json
 └── utils/
-    ├── config.yaml
+    ├── category.json
     └── greet/
-        ├── config.yaml
+        ├── command.json
         └── main.sh
 ```
 
@@ -21,16 +22,17 @@ meu-plugin/
 ```text
 meu-plugin/
 ├── README.md
+├── plugin.json
 └── tools/
-    ├── config.yaml
+    ├── category.json
     ├── backup/
-    │   ├── config.yaml
+    │   ├── command.json
     │   └── main.sh
     ├── restore/
-    │   ├── config.yaml
+    │   ├── command.json
     │   └── main.sh
     └── clean/
-        ├── config.yaml
+        ├── command.json
         └── main.sh
 ```
 
@@ -45,23 +47,24 @@ meu-plugin/
 ```text
 meu-plugin/
 ├── README.md
+├── plugin.json
 └── deploy/
-    ├── config.yaml
+    ├── category.json
     ├── staging/
-    │   ├── config.yaml
+    │   ├── category.json
     │   ├── app/
-    │   │   ├── config.yaml
+    │   │   ├── command.json
     │   │   └── main.sh
     │   └── db/
-    │       ├── config.yaml
+    │       ├── command.json
     │       └── main.sh
     └── production/
-        ├── config.yaml
+        ├── command.json
         ├── app/
-        │   ├── config.yaml
+        │   ├── command.json
         │   └── main.sh
         └── db/
-            ├── config.yaml
+            ├── command.json
             └── main.sh
 ```
 
@@ -77,21 +80,22 @@ meu-plugin/
 ```text
 meu-plugin/
 ├── README.md
+├── plugin.json
 ├── backup/
-│   ├── config.yaml
+│   ├── category.json
 │   ├── create/
-│   │   ├── config.yaml
+│   │   ├── command.json
 │   │   └── main.sh
 │   └── list/
-│       ├── config.yaml
+│       ├── command.json
 │       └── main.sh
 └── monitor/
-    ├── config.yaml
+    ├── category.json
     ├── status/
-    │   ├── config.yaml
+    │   ├── command.json
     │   └── main.sh
     └── logs/
-        ├── config.yaml
+        ├── command.json
         └── main.sh
 ```
 
@@ -110,23 +114,24 @@ meu-plugin/
 ├── DEVELOPMENT.md
 ├── LICENSE
 ├── .gitignore
+├── plugin.json
 ├── scripts/
 │   └── install.sh
 └── api/
-    ├── config.yaml
+    ├── category.json
     ├── common.sh          # Funções compartilhadas
     ├── get/
-    │   ├── config.yaml
+    │   ├── command.json
     │   ├── main.sh
     │   ├── .env.example
     │   └── .gitignore
     ├── post/
-    │   ├── config.yaml
+    │   ├── command.json
     │   ├── main.sh
     │   ├── .env.example
     │   └── .gitignore
     └── delete/
-        ├── config.yaml
+        ├── command.json
         ├── main.sh
         ├── .env.example
         └── .gitignore
@@ -173,21 +178,22 @@ Para começar um novo plugin, use esta estrutura:
 ```text
 meu-plugin/
 ├── README.md                 # Documentação principal
+├── plugin.json               # Config de plugin
 ├── DEVELOPMENT.md            # Guia de desenvolvimento
 ├── LICENSE                   # Licença do projeto
 ├── .gitignore                # Arquivos a ignorar
 │
 └── categoria/                # Sua categoria principal
-    ├── config.yaml           # Config da categoria
+    ├── category.json         # Config da categoria
     │
     ├── comando1/             # Primeiro comando
-    │   ├── config.yaml       # Config do comando
+    │   ├── command.json      # Config do comando
     │   ├── main.sh           # Script principal
     │   ├── .env.example      # Exemplo de .env
     │   └── .gitignore        # Ignorar .env local
     │
     └── comando2/             # Segundo comando
-        ├── config.yaml
+        ├── command.json
         ├── main.sh
         ├── .env.example
         └── .gitignore
@@ -250,20 +256,26 @@ plugin/
 
 ### Variáveis de ambiente por nível
 
-**Global do plugin** (categoria/config.yaml):
+**Global do plugin** (categoria/category.json):
 
-```yaml
-envs:
-  PLUGIN_VERSION: "1.0.0"
-  PLUGIN_DEBUG: "false"
+```json
+{
+  "envs": {
+    "PLUGIN_VERSION": "1.0.0",
+    "PLUGIN_DEBUG": "false"
+  }
+}
 ```
 
-**Específico do comando** (categoria/comando/config.yaml):
+**Específico do comando** (categoria/comando/command.json):
 
-```yaml
-envs:
-  API_ENDPOINT: "https://api.example.com"
-  TIMEOUT: "30"
+```json
+{
+  "envs": {
+    "API_ENDPOINT": "https://api.example.com",
+    "TIMEOUT": "30"
+  }
+}
 ```
 
 **Local via .env** (categoria/comando/.env):
