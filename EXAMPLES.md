@@ -171,7 +171,104 @@ main() {
 main "$@"
 ```
 
-## 6. Template Recomendado
+## 6. Plugin com Categoria que Aceita Parâmetros (Feature Avançada)
+
+Categorias podem ter um `entrypoint` que permite aceitar parâmetros diretamente:
+
+```text
+meu-plugin/
+├── README.md
+├── plugin.json
+└── demo/
+    ├── category.json         # Com campo entrypoint
+    ├── main.sh               # Script da categoria
+    ├── hello/
+    │   ├── command.json
+    │   └── main.sh
+    └── info/
+        ├── command.json
+        └── main.sh
+```
+
+**demo/category.json:**
+
+```json
+{
+  "name": "Demo",
+  "description": "Comandos de demonstração",
+  "entrypoint": "main.sh"
+}
+```
+
+**demo/main.sh:**
+
+```bash
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+source "$LIB_DIR/logger.sh"
+source "$LIB_DIR/color.sh"
+
+# Função exibida ao listar comandos da categoria
+show_complement_help() {
+    echo ""
+    log_output "${LIGHT_GREEN}Opções da categoria:${NC}"
+    log_output "  --list           Lista comandos disponíveis"
+    log_output "  --about          Informações sobre o plugin"
+}
+
+# Lista comandos
+list_demo_commands() {
+    local lock_file="$CLI_DIR/susa.lock"
+    local commands=$(jq -r '.commands[]? | select(.category == "demo") | "\(.name)|\(.description)"' "$lock_file" 2>/dev/null)
+
+    echo "$commands" | while IFS='|' read -r name desc; do
+        printf "  %-20s %s\n" "$name" "$desc"
+    done
+}
+
+# Main
+main() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --list)
+                list_demo_commands
+                exit 0
+                ;;
+            --about)
+                echo "Sobre o plugin..."
+                exit 0
+                ;;
+            *)
+                log_error "Opção desconhecida: $1"
+                exit 1
+                ;;
+        esac
+    done
+}
+
+# IMPORTANTE: Permite controle de execução do main
+if [ "${SUSA_SKIP_MAIN:-}" != "1" ]; then
+    main "$@"
+fi
+```
+
+**Uso:**
+
+- `susa demo` → Lista comandos + mostra help complementar
+- `susa demo --list` → Lista comandos da categoria
+- `susa demo --about` → Informações do plugin
+- `susa demo hello` → Executa comando específico
+
+**Quando usar:**
+
+- ✅ Operações em massa (--upgrade-all, --list-all)
+- ✅ Ações que afetam toda a categoria
+- ✅ Help complementar com informações extras
+- ❌ Comandos individuais (use comandos normais)
+
+## 7. Template Recomendado
 
 Para começar um novo plugin, use esta estrutura:
 

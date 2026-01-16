@@ -41,6 +41,8 @@ meu-plugin/
 
 ### category.json da Categoria
 
+**Categoria simples (navegável):**
+
 ```json
 {
   "name": "Nome da Categoria",
@@ -48,10 +50,23 @@ meu-plugin/
 }
 ```
 
+**Categoria com entrypoint (aceita parâmetros):**
+
+```json
+{
+  "name": "Demo",
+  "description": "Comandos de demonstração e exemplos",
+  "entrypoint": "main.sh"
+}
+```
+
 **Campos:**
 
 - `name`: Nome exibido no help (opcional)
 - `description`: Descrição da categoria (obrigatório)
+- `entrypoint`: Script da categoria que aceita parâmetros (opcional, feature avançada)
+
+> **ℹ️ Importante:** Quando uma categoria tem `entrypoint`, ela pode aceitar parâmetros diretamente. Veja seção "Categoria com Entrypoint" abaixo.
 
 ### command.json do Comando
 
@@ -274,6 +289,171 @@ susa self plugin remove seu-plugin
 
 # Reinstalar
 susa self plugin add /caminho/seu-plugin
+```
+
+## 🎨 Categoria com Entrypoint (Feature Avançada)
+
+Categorias podem ter um `entrypoint` que permite aceitar parâmetros diretamente, sem precisar criar comandos individuais. Isso é útil para operações em massa ou ações que afetam todos os comandos da categoria.
+
+### Quando Usar
+
+**✅ Bons casos de uso:**
+
+- Operações em massa (--upgrade-all, --list-all)
+- Ações que afetam múltiplos comandos da categoria
+- Parâmetros comuns que se aplicam a toda categoria
+- Help complementar com informações da categoria
+
+**❌ Evite usar para:**
+
+- Comandos individuais (use comandos normais)
+- Lógica complexa que deveria ser um comando próprio
+- Categorias que são apenas contêineres de navegação
+
+### Estrutura
+
+```text
+demo/
+├── category.json        # ← Com campo entrypoint
+├── main.sh              # ← Script da categoria
+├── hello/
+│   ├── command.json
+│   └── main.sh
+└── info/
+    ├── command.json
+    └── main.sh
+```
+
+### Configuração
+
+**demo/category.json:**
+
+```json
+{
+  "name": "Demo",
+  "description": "Comandos de demonstração e exemplos",
+  "entrypoint": "main.sh"
+}
+```
+
+### Implementação do Script
+
+**demo/main.sh:**
+
+```bash
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# Source libraries
+source "$LIB_DIR/logger.sh"
+source "$LIB_DIR/color.sh"
+
+# Show complement help (exibida ao final da listagem de comandos)
+show_complement_help() {
+    echo ""
+    log_output "${LIGHT_GREEN}Opções da categoria:${NC}"
+    log_output "  --list           Lista todos os comandos disponíveis"
+    log_output "  --about          Informações sobre o plugin"
+    echo ""
+}
+
+# Lista comandos demo disponíveis
+list_demo_commands() {
+    local lock_file="$CLI_DIR/susa.lock"
+
+    log_info "Comandos demo disponíveis:"
+
+    local commands=$(jq -r '.commands[]? | select(.category == "demo") |
+                           "\(.name)\t\(.description // "Sem descrição")"' "$lock_file" 2> /dev/null)
+
+    if [ -n "$commands" ]; then
+        echo "$commands"
+    else
+        log_warning "Nenhum comando demo encontrado"
+    fi
+}
+
+# Informações sobre o plugin
+show_about() {
+    echo ""
+    log_output "${LIGHT_CYAN}╔═══════════════════════════════════════════════════════╗${NC}"
+    log_output "${LIGHT_CYAN}║           Hello World Plugin - Demo                  ║${NC}"
+    log_output "${LIGHT_CYAN}╚═══════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    log_output "${LIGHT_GREEN}Sobre:${NC}"
+    log_output "  Plugin de exemplo que demonstra como criar plugins para o Susa CLI"
+    echo ""
+    log_output "${LIGHT_GREEN}Recursos demonstrados:${NC}"
+    log_output "  • Comandos simples e interativos"
+    log_output "  • Categorias com entrypoint e parâmetros"
+    log_output "  • Uso de bibliotecas do Susa (logger, color, etc)"
+    log_output "  • Estrutura de plugin completa"
+    echo ""
+}
+
+# Main function
+main() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --list)
+                list_demo_commands
+                exit 0
+                ;;
+            --about)
+                show_about
+                exit 0
+                ;;
+            *)
+                log_error "Opção desconhecida: $1"
+                echo ""
+                log_output "Use ${LIGHT_CYAN}susa demo --help${NC} para ver as opções"
+                exit 1
+                ;;
+        esac
+    done
+}
+
+# Execute main (controlado por SUSA_SKIP_MAIN)
+if [ "${SUSA_SKIP_MAIN:-}" != "1" ]; then
+    main "$@"
+fi
+```
+
+### Importante sobre `SUSA_SKIP_MAIN`
+
+A variável `SUSA_SKIP_MAIN` é usada pelo sistema para evitar execução do `main` quando apenas quer chamar `show_complement_help`:
+
+```bash
+# Sempre adicione esta condição no final do script
+if [ "${SUSA_SKIP_MAIN:-}" != "1" ]; then
+    main "$@"
+fi
+```
+
+Isso permite que o sistema:
+
+1. Execute o script normalmente quando o usuário passa parâmetros
+2. Apenas source o script e chame `show_complement_help()` ao listar comandos
+
+### Comportamento
+
+- **Sem argumentos** (`susa demo`): Lista comandos + mostra help complementar
+- **Com argumentos** (`susa demo --list`): Executa script da categoria
+- **Comando específico** (`susa demo hello`): Executa comando normalmente
+
+### Testando
+
+```bash
+# Lista comandos + mostra help complementar
+susa demo
+
+# Executa ação da categoria
+susa demo --list
+susa demo --about
+
+# Comando específico funciona normalmente
+susa demo hello
 ```
 
 ## 📝 Boas Práticas

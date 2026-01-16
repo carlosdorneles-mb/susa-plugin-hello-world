@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 set -euo pipefail
 
 # ============================================================
@@ -7,18 +7,13 @@ set -euo pipefail
 # ============================================================
 
 # Função de ajuda
-show_help() {
-    show_description
-    echo ""
-    show_usage "[opções]"
+show_complement_help() {
+    echo -e "${LIGHT_GREEN}Opções adicionais:${NC}"
+    echo "  -n, --name <nome>    Nome para a saudação (padrão: World)"
     echo ""
     echo -e "${LIGHT_GREEN}Descrição:${NC}"
     echo "  Exibe uma mensagem de saudação personalizada."
     echo "  Demonstra o uso de variáveis de ambiente e argumentos."
-    echo ""
-    echo -e "${LIGHT_GREEN}Opções:${NC}"
-    echo "  -n, --name <nome>    Nome para a saudação (padrão: World)"
-    echo "  -h, --help           Exibe esta mensagem de ajuda"
     echo ""
     echo -e "${LIGHT_GREEN}Variáveis de Ambiente:${NC}"
     echo "  HELLO_PREFIX         Prefixo da mensagem (padrão: 👋)"
@@ -71,10 +66,6 @@ main() {
     # Parse de argumentos
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -h | --help)
-                show_help
-                exit 0
-                ;;
             -n | --name)
                 if [ -z "${2:-}" ]; then
                     log_error "Opção --name requer um argumento"
@@ -97,5 +88,5 @@ main() {
     hello_world "$name"
 }
 
-# Executar
-main "$@"
+# Execute main only if not showing help
+[ "${SUSA_SHOW_HELP:-}" != "1" ] && main "$@"
