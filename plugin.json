@@ -1,6 +1,6 @@
 {
   "name": "hello-world-plugin",
-  "version": "0.0.0",
-  "description": "Descrição do que o plugin faz",
+  "version": "1.0.0",
+  "description": "Plugin de exemplo demonstrando comandos, categorias com entrypoint e boas práticas",
   "directory": "src"
 }

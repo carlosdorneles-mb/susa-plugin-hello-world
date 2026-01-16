@@ -1,4 +1,5 @@
 {
   "name": "Demo",
-  "description": "Comandos de demonstração e exemplos"
+  "description": "Comandos de demonstração e exemplos",
+  "entrypoint": "main.sh"
 }

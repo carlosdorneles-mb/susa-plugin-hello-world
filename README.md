@@ -29,13 +29,20 @@ susa self plugin list
 ## 📚 Uso
 
 ```bash
+# Listar comandos da categoria (mostra help complementar)
+susa demo
+
+# Opções da categoria
+susa demo --list           # Lista todos os comandos disponíveis
+susa demo --about          # Informações sobre o plugin
+
 # Comando básico
 susa demo hello
 
 # Com nome personalizado
 susa demo hello --name "João"
 
-# Ver ajuda
+# Ver ajuda do comando
 susa demo hello --help
 ```
 
@@ -45,8 +52,11 @@ susa demo hello --help
 susa-plugin-hello-world/
 ├── README.md              # Documentação
 ├── plugin.json            # Config do plugin
+├── DEVELOPMENT.md         # Guia técnico de desenvolvimento
+├── EXAMPLES.md            # Exemplos de estruturas de plugins
 ├── demo/                  # Categoria
-│   ├── category.json      # Config da categoria
+│   ├── category.json      # Config da categoria (com entrypoint)
+│   ├── main.sh            # Script da categoria (aceita parâmetros)
 │   └── hello/             # Comando
 │       ├── command.json   # Config do comando
 │       ├── main.sh        # Script principal
@@ -61,9 +71,12 @@ susa-plugin-hello-world/
 ```json
 {
   "name": "Demo",
-  "description": "Comandos de demonstração do plugin"
+  "description": "Comandos de demonstração e exemplos",
+  "entrypoint": "main.sh"
 }
 ```
+
+**Nota:** O campo `entrypoint` permite que a categoria aceite parâmetros diretamente (feature avançada). Veja seção "Categoria com Entrypoint" abaixo.
 
 ### Comando: `demo/hello/command.json`
 
@@ -81,6 +94,70 @@ susa-plugin-hello-world/
   }
 }
 ```
+
+## 🎨 Categoria com Entrypoint (Feature Avançada)
+
+Este plugin demonstra o uso de **entrypoint em categoria**, permitindo que a categoria aceite parâmetros diretamente.
+
+### Como Funciona
+
+Quando uma categoria tem um `entrypoint`:
+
+1. **Sem parâmetros** (`susa demo`) - Lista comandos + mostra help complementar
+2. **Com parâmetros** (`susa demo --list`) - Executa o script da categoria
+3. **Comando específico** (`susa demo hello`) - Funciona normalmente
+
+### Implementação
+
+**demo/main.sh:**
+
+```bash
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+source "$LIB_DIR/logger.sh"
+source "$LIB_DIR/color.sh"
+
+# Função exibida ao listar comandos da categoria
+show_complement_help() {
+    echo ""
+    log_output "${LIGHT_GREEN}Opções da categoria demo:${NC}"
+    log_output "  -h, --help       Mostra esta mensagem de ajuda"
+    log_output "  --list           Lista todos os comandos demo disponíveis"
+    log_output "  --about          Informações sobre o plugin Hello World"
+}
+
+# Main
+main() {
+    case "${1:-}" in
+        -h|--help) show_complement_help; exit 0 ;;
+        --list) list_demo_commands; exit 0 ;;
+        --about) show_about; exit 0 ;;
+        *) log_error "Opção desconhecida: $1"; exit 1 ;;
+    esac
+}
+
+# IMPORTANTE: Permite controle de execução
+if [ "${SUSA_SKIP_MAIN:-}" != "1" ]; then
+    main "$@"
+fi
+```
+
+### Quando Usar
+
+**✅ Bons casos de uso:**
+
+- Operações em massa (--upgrade-all, --list-all)
+- Ações que afetam múltiplos comandos da categoria
+- Help complementar com informações da categoria
+
+**❌ Evite usar para:**
+
+- Comandos individuais (use comandos normais)
+- Lógica complexa que deveria ser um comando próprio
+
+> **📖 Documentação completa:** Veja [Categorias com Parâmetros](https://duducp.github.io/susa/guides/subcategories/#categorias-com-parametros-feature-avancada) para mais detalhes.
 
 ## 🚀 Como Criar Seu Próprio Plugin
 
